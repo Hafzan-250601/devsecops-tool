@@ -2,7 +2,6 @@ image: docker:cli
 
 stages:
   - test_and_scan
-  - push_images
 
 variables:
   DOCKER_HOST: tcp://docker:2375/
@@ -66,20 +65,3 @@ trivy_scan:
     - docker build -t backendmsprod .
     - trivy --cache-dir .trivy/cache image --severity HIGH,CRITICAL --no-progress --exit-code 0 backendmsprod
   allow_failure: false
-
-push_images:
-  stage: push_images
-  script:
-    - apk add --no-cache aws-cli
-    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-    - docker logout
-    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ECR_REPO_FRONTEND
-    - cd MathSheetFrontend
-    - docker build -t frontendmsprod .
-    - docker tag frontendmsprod:latest $AWS_ECR_REPO_FRONTEND/frontendmsprod:latest
-    - docker push $AWS_ECR_REPO_FRONTEND/frontendmsprod:latest
-    - cd ../MathSheetBackend
-    - docker build -t backendmsprod .
-    - docker tag backendmsprod:latest $AWS_ECR_REPO_BACKEND/backendmsprod:latest
-    - docker push $AWS_ECR_REPO_BACKEND/backendmsprod:latest
