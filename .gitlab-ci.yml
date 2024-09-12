@@ -25,7 +25,6 @@ snyk:
     - cd .. && cd MathSheetBackend
     - snyk monitor --all-projects --severity-threshold=high --pkg-manager=npm
     - snyk code test --all-projects --severity-threshold=high
-  allow_failure: false
 
 test:
   stage: test_and_scan
@@ -44,11 +43,6 @@ zap_scan:
   script:
      - docker ps
      - docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://864d-110-159-182-228.ngrok-free.app
-  artifacts:
-    paths:
-      - zap_report.html
-    expire_in: 1 week
-  allow_failure: false
 
 trivy_scan:
   stage: test_and_scan
@@ -64,4 +58,3 @@ trivy_scan:
     - cd ../MathSheetBackend
     - docker build -t backendmsprod .
     - trivy --cache-dir .trivy/cache image --severity HIGH,CRITICAL --no-progress --exit-code 0 backendmsprod
-  allow_failure: false
