@@ -38,12 +38,6 @@ test:
     - sleep 20
     - python test_mathsheet.py
 
-zap_scan:
-  stage: test_and_scan
-  script:
-     - docker ps
-     - docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://864d-110-159-182-228.ngrok-free.app
-
 trivy_scan:
   stage: test_and_scan
   script:
@@ -58,3 +52,9 @@ trivy_scan:
     - cd ../MathSheetBackend
     - docker build -t backendmsprod .
     - trivy --cache-dir .trivy/cache image --severity HIGH,CRITICAL --no-progress --exit-code 0 backendmsprod
+
+zap_scan:
+  stage: test_and_scan
+  script:
+     - docker ps
+     - docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://864d-110-159-182-228.ngrok-free.app
